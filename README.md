@@ -15,12 +15,21 @@ A structured 25-day coding challenge to build a **strong JavaScript foundation**
 - Comparison operators (`===`, `!==`, `>`, `<`, `>=`, `<=`)
 - Input type validation using `typeof`, `isNaN()`, `isFinite()`
 
+**Concept Files (learn step-by-step):**
+| # | Topic | File | What You'll Learn |
+|---|-------|------|-------------------|
+| 1 | 📦 let vs const | `01-let-vs-const.js` | Block scoping, TDZ, const with objects/arrays, var pitfalls |
+| 2 | 🔢 Data Types | `02-data-types.js` | All 7 primitives, reference types, copy behavior (value vs ref) |
+| 3 | ➕ Operators | `03-operators.js` | Arithmetic, comparison, logical, ternary, precedence |
+| 4 | 🔄 Type Coercion | `04-type-coercion.js` | Explicit/implicit conversion, falsy values, gotchas |
+
 **Projects Built:**
 | # | Project | File | Description |
 |---|---------|------|-------------|
 | 1 | 🌡️ Temperature Converter | `temperatureConverter.js` | Converts Celsius ↔ Fahrenheit with input validation |
 | 2 | ⚖️ BMI Calculator | `bmiCalculator.js` | Calculates BMI (metric & imperial) with WHO classification |
-| 3 | 🖥️ Interactive UI | `index.html` | Visual interface for both calculators (open in browser) |
+| 3 | 🧩 Practice Problems | `05-practice-problems.js` | 8 coding challenges: swap, even/odd, leap year, discount, etc. |
+| 4 | 🖥️ Interactive UI | `index.html` | Visual interface for both calculators (open in browser) |
 
 **Stretch Goals:**
 - ✅ Input type validation on all functions
@@ -35,9 +44,19 @@ A structured 25-day coding challenge to build a **strong JavaScript foundation**
 # Navigate to day folder
 cd day-01-variables-datatypes-operators
 
-# Run any file with Node.js
+# Run concept files
+node 01-let-vs-const.js
+node 02-data-types.js
+node 03-operators.js
+node 04-type-coercion.js
+
+# Run project files
 node temperatureConverter.js
 node bmiCalculator.js
+node 05-practice-problems.js
+
+# Open interactive UI in browser
+open index.html
 ```
 
 ---
@@ -48,9 +67,14 @@ node bmiCalculator.js
 JavaScript-React-ES6-Practice-Project-25-days-challenge-/
 ├── README.md
 └── day-01-variables-datatypes-operators/
-    ├── index.html
+    ├── 01-let-vs-const.js
+    ├── 02-data-types.js
+    ├── 03-operators.js
+    ├── 04-type-coercion.js
+    ├── 05-practice-problems.js
     ├── temperatureConverter.js
-    └── bmiCalculator.js
+    ├── bmiCalculator.js
+    └── index.html
 ```
 
 ---
