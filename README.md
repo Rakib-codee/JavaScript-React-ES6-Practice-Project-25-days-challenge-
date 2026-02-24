@@ -20,6 +20,7 @@ A structured 25-day coding challenge to build a **strong JavaScript foundation**
 |---|---------|------|-------------|
 | 1 | 🌡️ Temperature Converter | `temperatureConverter.js` | Converts Celsius ↔ Fahrenheit with input validation |
 | 2 | ⚖️ BMI Calculator | `bmiCalculator.js` | Calculates BMI (metric & imperial) with WHO classification |
+| 3 | 🖥️ Interactive UI | `index.html` | Visual interface for both calculators (open in browser) |
 
 **Stretch Goals:**
 - ✅ Input type validation on all functions
@@ -47,6 +48,7 @@ node bmiCalculator.js
 JavaScript-React-ES6-Practice-Project-25-days-challenge-/
 ├── README.md
 └── day-01-variables-datatypes-operators/
+    ├── index.html
     ├── temperatureConverter.js
     └── bmiCalculator.js
 ```
