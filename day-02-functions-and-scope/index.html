@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Day 2 – Mini Calculator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+      color: #fff;
+      padding: 30px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #aaa;
+      margin-bottom: 40px;
+      font-size: 0.95rem;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 28px;
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 24px;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+    }
+
+    .card .desc {
+      color: #999;
+      font-size: 0.85rem;
+      margin-bottom: 22px;
+    }
+
+    /* Calculator Display */
+    .display {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      min-height: 90px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-end;
+    }
+
+    .display .expression {
+      color: #888;
+      font-size: 0.95rem;
+      min-height: 24px;
+      word-break: break-all;
+    }
+
+    .display .result {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #fff;
+      word-break: break-all;
+    }
+
+    /* Button Grid */
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: #fff;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-num {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-num:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .btn-op {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .btn-op:hover {
+      opacity: 0.85;
+    }
+
+    .btn-eq {
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+      color: #1a1a2e;
+      grid-column: span 2;
+    }
+
+    .btn-eq:hover {
+      opacity: 0.9;
+    }
+
+    .btn-clear {
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      color: #fff;
+    }
+
+    .btn-clear:hover {
+      opacity: 0.85;
+    }
+
+    .btn-special {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #aaa;
+    }
+
+    .btn-special:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    /* History Section */
+    .history-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+    }
+
+    .history-card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 14px;
+      color: #bbb;
+    }
+
+    .history-list {
+      max-height: 220px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.15) transparent;
+    }
+
+    .history-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .history-list::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.15);
+      border-radius: 3px;
+    }
+
+    .history-entry {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+
+    .history-entry:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .history-entry .expr {
+      color: #999;
+      font-size: 0.9rem;
+    }
+
+    .history-entry .ans {
+      color: #38ef7d;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .history-empty {
+      color: #555;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+    }
+
+    .clear-history-btn {
+      margin-top: 12px;
+      width: 100%;
+      padding: 10px;
+      border: 1px solid rgba(255, 75, 75, 0.3);
+      border-radius: 8px;
+      background: rgba(255, 75, 75, 0.08);
+      color: #ff6b6b;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .clear-history-btn:hover {
+      background: rgba(255, 75, 75, 0.18);
+    }
+
+    /* Error Animation */
+    .error-shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .result-error {
+      color: #ff6b6b !important;
+      font-size: 1.2rem !important;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      color: #555;
+      font-size: 0.8rem;
+    }
+
+    footer a {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    @media (max-width: 500px) {
+      .btn {
+        padding: 14px;
+        font-size: 1rem;
+      }
+
+      .display .result {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📅 Day 2 – Functions & Scope</h1>
+  <p class="subtitle">JavaScript/React ES6 Practice Project — 25 Days Challenge</p>
+
+  <div class="container">
+
+    <!-- ========== Calculator ========== -->
+    <div class="card">
+      <h2>🖩 Mini Calculator</h2>
+      <p class="desc">Built with functions, scope & input validation</p>
+
+      <div class="display" id="display">
+        <div class="expression" id="expression"></div>
+        <div class="result" id="result">0</div>
+      </div>
+
+      <div class="btn-grid">
+        <button class="btn btn-clear" onclick="clearAll()">AC</button>
+        <button class="btn btn-special" onclick="backspace()">⌫</button>
+        <button class="btn btn-special" onclick="inputOperator('%')">%</button>
+        <button class="btn btn-op" onclick="inputOperator('/')">÷</button>
+
+        <button class="btn btn-num" onclick="inputDigit('7')">7</button>
+        <button class="btn btn-num" onclick="inputDigit('8')">8</button>
+        <button class="btn btn-num" onclick="inputDigit('9')">9</button>
+        <button class="btn btn-op" onclick="inputOperator('*')">×</button>
+
+        <button class="btn btn-num" onclick="inputDigit('4')">4</button>
+        <button class="btn btn-num" onclick="inputDigit('5')">5</button>
+        <button class="btn btn-num" onclick="inputDigit('6')">6</button>
+        <button class="btn btn-op" onclick="inputOperator('-')">−</button>
+
+        <button class="btn btn-num" onclick="inputDigit('1')">1</button>
+        <button class="btn btn-num" onclick="inputDigit('2')">2</button>
+        <button class="btn btn-num" onclick="inputDigit('3')">3</button>
+        <button class="btn btn-op" onclick="inputOperator('+')">+</button>
+
+        <button class="btn btn-num" onclick="toggleSign()">±</button>
+        <button class="btn btn-num" onclick="inputDigit('0')">0</button>
+        <button class="btn btn-num" onclick="inputDecimal()">.</button>
+        <button class="btn btn-op" onclick="inputOperator('**')">xⁿ</button>
+
+        <button class="btn btn-eq" onclick="evaluate()" style="grid-column: span 4;">=</button>
+      </div>
+    </div>
+
+    <!-- ========== History ========== -->
+    <div class="history-card">
+      <h2>📋 Calculation History</h2>
+      <div class="history-list" id="historyList">
+        <div class="history-empty">No calculations yet</div>
+      </div>
+      <button class="clear-history-btn" onclick="clearHistory()">🗑️ Clear History</button>
+    </div>
+
+  </div>
+
+  <footer>
+    Built by <a href="https://github.com/Rakib-codee" target="_blank">Rakib</a> · 
+    <a href="https://github.com/Rakib-codee/JavaScript-React-ES6-Practice-Project-25-days-challenge-" target="_blank">GitHub Repo</a>
+  </footer>
+
+  <script>
+    // ============================================
+    // 🛡️ Input Validation (Stretch Goal)
+    // ============================================
+    const isValidNumber = (value) => {
+      return typeof value === "number" && !isNaN(value) && isFinite(value);
+    };
+
+    // ============================================
+    // 🧮 Core Calculator Functions
+    // Demonstrates: function declaration vs arrow function
+    // ============================================
+
+    // Function Declaration (hoisted)
+    function add(a, b) {
+      return a + b;
+    }
+
+    // Arrow Function
+    const subtract = (a, b) => a - b;
+
+    // Function Expression
+    const multiply = function (a, b) {
+      return a * b;
+    };
+
+    // Arrow with extra validation
+    const divide = (a, b) => {
+      if (b === 0) return null; // signal error
+      return a / b;
+    };
+
+    const modulo = (a, b) => {
+      if (b === 0) return null;
+      return a % b;
+    };
+
+    const power = (a, b) => a ** b;
+
+    // ============================================
+    // 📋 Operations Map (Higher-order pattern)
+    // ============================================
+    const operations = {
+      "+": { fn: add, symbol: "+" },
+      "-": { fn: subtract, symbol: "−" },
+      "*": { fn: multiply, symbol: "×" },
+      "/": { fn: divide, symbol: "÷" },
+      "%": { fn: modulo, symbol: "%" },
+      "**": { fn: power, symbol: "^" },
+    };
+
+    // ============================================
+    // 🖩 Calculator State (Scope & Closure)
+    // ============================================
+    const createCalculatorState = () => {
+      // Private state via closure
+      let currentInput = "0";
+      let previousInput = "";
+      let currentOperator = null;
+      let shouldResetInput = false;
+      let history = [];
+
+      return {
+        get currentInput() { return currentInput; },
+        set currentInput(val) { currentInput = val; },
+        get previousInput() { return previousInput; },
+        set previousInput(val) { previousInput = val; },
+        get currentOperator() { return currentOperator; },
+        set currentOperator(val) { currentOperator = val; },
+        get shouldResetInput() { return shouldResetInput; },
+        set shouldResetInput(val) { shouldResetInput = val; },
+        get history() { return [...history]; },
+        addHistory(entry) { history.push(entry); },
+        clearHistory() { history = []; },
+      };
+    };
+
+    const state = createCalculatorState();
+
+    // ============================================
+    // 🖥️ Display Functions
+    // ============================================
+    const expressionEl = document.getElementById("expression");
+    const resultEl = document.getElementById("result");
+    const displayEl = document.getElementById("display");
+
+    function updateDisplay() {
+      resultEl.textContent = state.currentInput;
+      resultEl.classList.remove("result-error");
+    }
+
+    function showExpression(text) {
+      expressionEl.textContent = text;
+    }
+
+    function showError(message) {
+      resultEl.textContent = message;
+      resultEl.classList.add("result-error");
+      displayEl.classList.add("error-shake");
+      setTimeout(() => displayEl.classList.remove("error-shake"), 400);
+    }
+
+    // ============================================
+    // 🎮 Calculator Actions
+    // ============================================
+
+    function inputDigit(digit) {
+      if (state.shouldResetInput) {
+        state.currentInput = digit;
+        state.shouldResetInput = false;
+      } else {
+        // Prevent multiple leading zeros
+        state.currentInput = state.currentInput === "0" ? digit : state.currentInput + digit;
+      }
+
+      // Input validation: max length
+      if (state.currentInput.replace(/[^0-9]/g, "").length > 15) {
+        state.currentInput = state.currentInput.slice(0, -1);
+        return;
+      }
+
+      updateDisplay();
+    }
+
+    function inputDecimal() {
+      if (state.shouldResetInput) {
+        state.currentInput = "0.";
+        state.shouldResetInput = false;
+        updateDisplay();
+        return;
+      }
+
+      // Prevent multiple decimals
+      if (state.currentInput.includes(".")) return;
+
+      state.currentInput += ".";
+      updateDisplay();
+    }
+
+    function toggleSign() {
+      if (state.currentInput === "0") return;
+
+      if (state.currentInput.startsWith("-")) {
+        state.currentInput = state.currentInput.slice(1);
+      } else {
+        state.currentInput = "-" + state.currentInput;
+      }
+      updateDisplay();
+    }
+
+    function inputOperator(op) {
+      const current = parseFloat(state.currentInput);
+
+      // Validate current input
+      if (!isValidNumber(current)) {
+        showError("Invalid number");
+        return;
+      }
+
+      // If there's a pending operation, evaluate first
+      if (state.currentOperator && !state.shouldResetInput) {
+        const result = performCalculation();
+        if (result === null) return; // error occurred
+      }
+
+      const symbol = operations[op] ? operations[op].symbol : op;
+      state.previousInput = state.currentInput;
+      state.currentOperator = op;
+      state.shouldResetInput = true;
+
+      showExpression(`${state.previousInput} ${symbol}`);
+    }
+
+    function performCalculation() {
+      const prev = parseFloat(state.previousInput);
+      const current = parseFloat(state.currentInput);
+
+      // Input validation
+      if (!isValidNumber(prev) || !isValidNumber(current)) {
+        showError("Invalid input");
+        return null;
+      }
+
+      if (!operations[state.currentOperator]) {
+        showError("Unknown operator");
+        return null;
+      }
+
+      const result = operations[state.currentOperator].fn(prev, current);
+
+      // Check for division/modulo by zero
+      if (result === null) {
+        showError("Cannot divide by zero!");
+        state.currentOperator = null;
+        state.shouldResetInput = true;
+        return null;
+      }
+
+      // Check result validity
+      if (!isValidNumber(result)) {
+        showError("Math error");
+        state.currentOperator = null;
+        state.shouldResetInput = true;
+        return null;
+      }
+
+      return result;
+    }
+
+    function evaluate() {
+      if (!state.currentOperator) return;
+
+      const prev = state.previousInput;
+      const current = state.currentInput;
+      const symbol = operations[state.currentOperator].symbol;
+
+      const result = performCalculation();
+      if (result === null) return;
+
+      // Format: remove unnecessary trailing zeros
+      const formatted = parseFloat(result.toPrecision(12)).toString();
+
+      // Add to history
+      const expression = `${prev} ${symbol} ${current}`;
+      state.addHistory({ expression, result: formatted });
+      renderHistory();
+
+      // Update display
+      showExpression(`${prev} ${symbol} ${current} =`);
+      state.currentInput = formatted;
+      state.currentOperator = null;
+      state.shouldResetInput = true;
+
+      updateDisplay();
+    }
+
+    function clearAll() {
+      state.currentInput = "0";
+      state.previousInput = "";
+      state.currentOperator = null;
+      state.shouldResetInput = false;
+      showExpression("");
+      updateDisplay();
+    }
+
+    function backspace() {
+      if (state.shouldResetInput) return;
+
+      if (state.currentInput.length === 1 || (state.currentInput.length === 2 && state.currentInput.startsWith("-"))) {
+        state.currentInput = "0";
+      } else {
+        state.currentInput = state.currentInput.slice(0, -1);
+      }
+      updateDisplay();
+    }
+
+    // ============================================
+    // 📋 History Functions
+    // ============================================
+    const historyListEl = document.getElementById("historyList");
+
+    function renderHistory() {
+      const history = state.history;
+
+      if (history.length === 0) {
+        historyListEl.innerHTML = '<div class="history-empty">No calculations yet</div>';
+        return;
+      }
+
+      historyListEl.innerHTML = history
+        .slice()
+        .reverse()
+        .map(
+          (h) => `
+          <div class="history-entry" onclick="useHistoryResult('${h.result}')">
+            <span class="expr">${h.expression}</span>
+            <span class="ans">= ${h.result}</span>
+          </div>
+        `
+        )
+        .join("");
+
+      // Auto-scroll to top
+      historyListEl.scrollTop = 0;
+    }
+
+    function useHistoryResult(value) {
+      state.currentInput = value;
+      state.shouldResetInput = false;
+      updateDisplay();
+    }
+
+    function clearHistory() {
+      state.clearHistory();
+      renderHistory();
+    }
+
+    // ============================================
+    // ⌨️ Keyboard Support
+    // ============================================
+    document.addEventListener("keydown", (e) => {
+      e.preventDefault();
+
+      if (/^[0-9]$/.test(e.key)) {
+        inputDigit(e.key);
+      } else if (e.key === ".") {
+        inputDecimal();
+      } else if (e.key === "+" || e.key === "-") {
+        inputOperator(e.key);
+      } else if (e.key === "*") {
+        inputOperator("*");
+      } else if (e.key === "/") {
+        inputOperator("/");
+      } else if (e.key === "%") {
+        inputOperator("%");
+      } else if (e.key === "Enter" || e.key === "=") {
+        evaluate();
+      } else if (e.key === "Escape") {
+        clearAll();
+      } else if (e.key === "Backspace") {
+        backspace();
+      }
+    });
+  </script>
+</body>
+</html>
